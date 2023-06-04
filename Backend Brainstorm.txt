@@ -1,0 +1,83 @@
+--------------------------------
+           DB SCHEMA
+--------------------------------
+
+<> Users Table
+	- id
+	- email
+	- pass
+	- name
+	- picture?
+	- todos [] fk -> todos
+
+
+<> Todos Table
+	- id
+	- title
+	- completed
+	- createdAt
+	- updatedAt
+	- userId fk -> users
+
+
+--------------------------------
+         API ENDPOINTS
+--------------------------------
+
+<> Auth
+	- Login
+		POST	{ email, pass }
+			{ user, token, message }
+			
+	- Register
+		POST { email, pass, name, picture? }
+			{ user, token, message }
+			
+	- Test User ( skip registration & login by automating the process with a test account )
+		GET
+			{ user, token, message }
+
+<> User
+	- Create		(JWT, isOwn)
+		- Use Register from Auth
+		
+	- Read		(JWT, isOwn)
+		GET
+			{ user, message }
+	- Update		(JWT, isOwn)
+		PUT	{ pass, name, picture }
+			{ user, message }
+			
+	- Delete		(JWT, isOwn)
+		DELETE
+			{ user, message }
+		* Don't forget to logout the user from  FE
+	
+<> Todo
+	- Create		(JWT, isOwn)
+		POST { title }
+			{ todo, message }
+			
+	- Read		(JWT, isOwn)
+		GET	
+			{ todo, message } 
+			
+	- Update		(JWT, isOwn)
+		PUT	{ title, completed }
+			{ todo, message }
+			
+	- Delete		(JWT, isOwn)
+		DELETE
+			{ todo, message }
+	- Read All 
+		GET 
+			{ todos, message }
+			
+	- Complete		(JWT, isOwn)
+		GET
+			{ todo, message }
+		
+	- Delete All	(JWT)
+		GET
+			{ todos, message }
+
