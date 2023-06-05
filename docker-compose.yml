@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - 8080:8080
+    depends_on:
+      - backend
+    networks:
+      - cowlar-test
+
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    ports:
+      - 5000:5000
+    depends_on:
+      - database
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_NAME=cowlar-test
+      - DB_USER=admin
+      - DB_PASSWORD=pass
+    networks:
+      - cowlar-test
+
+  database:
+    image: postgres
+    container_name: postgres-db
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=cowlar-test
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=pass
+    networks:
+      - cowlar-test
+
+networks:
+  cowlar-test:
+    driver: bridge
