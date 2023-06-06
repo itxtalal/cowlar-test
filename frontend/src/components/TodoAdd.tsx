@@ -27,7 +27,7 @@ const TodoAdd = () => {
         'todos',
         JSON.stringify([
           ...JSON.parse(localStorage.getItem('todos') || '[]'),
-          todo,
+          { title: todo, id: Date.now() },
         ])
       );
       setTodo('');
@@ -37,7 +37,7 @@ const TodoAdd = () => {
   return (
     <form
       onSubmit={onSubmit}
-      className="w-[90%] lg:w-[60%] xl:w-[40%] flex flex-col items-center justify-center gap-2"
+      className="w-full flex flex-col items-center justify-center gap-2"
     >
       <Input
         todo={todo}
