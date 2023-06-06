@@ -1,6 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { CustomError } from './Errors';
-import logger from '../logger';
 
 const errorHandler = (
   err: CustomError,
@@ -12,7 +11,7 @@ const errorHandler = (
     err.status
   } ${err.description ?? err}`;
 
-  logger.error(message);
+  console.error(message);
 
   res.status(err.status ?? 500).json({
     msg:
