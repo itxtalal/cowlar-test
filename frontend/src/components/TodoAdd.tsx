@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Button from './Button';
 import Input from './Input';
+import { UserContext } from '../context';
 
 const TodoAdd = () => {
   const [todo, setTodo] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { addTodo } = useContext(UserContext);
 
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTodo(e.target.value);
@@ -23,13 +25,14 @@ const TodoAdd = () => {
     setError('');
     setTimeout(() => {
       setIsLoading(false);
-      localStorage.setItem(
-        'todos',
-        JSON.stringify([
-          ...JSON.parse(localStorage.getItem('todos') || '[]'),
-          { title: todo, id: Date.now() },
-        ])
-      );
+      addTodo({
+        id: Math.floor(Math.random() * 1000),
+        title: todo,
+        completed: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+
       setTodo('');
     }, 2000);
   };

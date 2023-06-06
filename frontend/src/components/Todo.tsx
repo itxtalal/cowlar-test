@@ -19,15 +19,17 @@ const DeleteIcon = () => (
 type Props = {
   todo: ITodo;
   deleteTodo: (id: number) => void;
+  toggleTodo: (id: number) => void;
 };
 
-const Todo: FC<Props> = ({ todo, deleteTodo }) => {
+const Todo: FC<Props> = ({ todo, deleteTodo, toggleTodo }) => {
   return (
     <li className="w-full border-b border-gray-200 rounded-t-lg">
       <div className="flex items-center pl-3 pr-2">
         <input
           type="checkbox"
-          value=""
+          value={todo.completed.toString()}
+          onChange={() => toggleTodo(todo.id)}
           className="w-6 h-6  text-blue-600 bg-gray-100 hover:bg-blue-600 border-gray-300 rounded-full focus:ring-blue-500 focus:ring-2 transition-all cursor-pointer"
         />
         <label className="w-full py-3 ml-3 mr-2 text-base lg:text-lg font-medium text-gray-900">

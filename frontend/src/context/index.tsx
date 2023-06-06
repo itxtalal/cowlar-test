@@ -1,7 +1,7 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { ITodo, IUser, IUserContext } from '../interfaces';
 
-const UserContext = createContext<IUserContext | null>(null);
+const UserContext = createContext<IUserContext>(null!);
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -19,9 +19,21 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
+  const toggleTodo = (id: number) => {
+    setTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
   const hydrateTodos = (todos: ITodo[]) => {
     setTodos(() => todos);
   };
+
+  useEffect(() => {
+    console.log(todos);
+  }, [todos]);
 
   const contextValue = {
     user,
@@ -30,6 +42,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     addTodo,
     deleteTodo,
     hydrateTodos,
+    toggleTodo,
   };
 
   // Provide the context value to the children components

@@ -1,25 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { ITodo } from '../interfaces';
 import Todo from './Todo';
 import Loading from './Loading';
+import { UserContext } from '../context';
 
 const TodoList = () => {
-  const [todos, setTodos] = useState<ITodo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { todos, deleteTodo, toggleTodo } = useContext(UserContext);
 
   useEffect(() => {
-    const todos = localStorage.getItem('todos')
-      ? JSON.parse(localStorage.getItem('todos') || '[]')
-      : [];
-    setTodos(todos);
     setIsLoading(false);
   }, []);
-
-  const deleteTodo = (id: number) => {
-    const newTodos = todos.filter((todo: ITodo) => todo.id !== id);
-    setTodos(() => newTodos);
-    localStorage.setItem('todos', JSON.stringify(newTodos));
-  };
 
   if (isLoading) return <Loading />;
 
@@ -31,7 +22,12 @@ const TodoList = () => {
       {todos.length > 0 ? (
         <ul className="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
           {todos.map((todo: ITodo) => (
-            <Todo todo={todo} key={todo.id} deleteTodo={deleteTodo} />
+            <Todo
+              todo={todo}
+              key={todo.id}
+              deleteTodo={deleteTodo}
+              toggleTodo={toggleTodo}
+            />
           ))}
         </ul>
       ) : (
