@@ -329,6 +329,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@remix-run/router@1.6.3":
+  version "1.6.3"
+  resolved "https://registry.npmjs.org/@remix-run/router/-/router-1.6.3.tgz"
+  integrity sha512-EXJysQ7J3veRECd0kZFQwYYd5sJMcq2O/m60zu1W2l3oVQ9xtub8jTOtYRE0+M2iomyG/W3Ps7+vp2kna0C27Q==
+
 "@tailwindcss/forms@^0.5.3":
   version "0.5.3"
   resolved "https://registry.npmjs.org/@tailwindcss/forms/-/forms-0.5.3.tgz"
@@ -1459,7 +1464,7 @@ queue-microtask@^1.2.2:
   resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-react-dom@^18.2.0:
+react-dom@^18.2.0, react-dom@>=16.8:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz"
   integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
@@ -1472,7 +1477,22 @@ react-refresh@^0.14.0:
   resolved "https://registry.npmjs.org/react-refresh/-/react-refresh-0.14.0.tgz"
   integrity sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==
 
-react@^18.2.0:
+react-router-dom@^6.12.0:
+  version "6.12.0"
+  resolved "https://registry.npmjs.org/react-router-dom/-/react-router-dom-6.12.0.tgz"
+  integrity sha512-UzLwZ3ZVaDr6YV0HdjwxuwtDKgwpJx9o1ea9fU0HV4tTvzdB8WPHzlLFMo5orchpIS84e8G4Erlhu7Rl84XDFQ==
+  dependencies:
+    "@remix-run/router" "1.6.3"
+    react-router "6.12.0"
+
+react-router@6.12.0:
+  version "6.12.0"
+  resolved "https://registry.npmjs.org/react-router/-/react-router-6.12.0.tgz"
+  integrity sha512-/tCGtLq9umxRvbYeIx3j94CmpQfue0E3qnetVm9luKhu58cR4t+3O4ZrQXBdXfJrBATOAj+wF/1ihJJQI8AoTw==
+  dependencies:
+    "@remix-run/router" "1.6.3"
+
+react@^18.2.0, react@>=16.8:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==

@@ -1,17 +1,30 @@
-import RootLayout from './Layout';
-import TodoAdd from './components/TodoAdd';
-import TodoList from './components/TodoList';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import Protected from './Layout/Protected';
+import Home from './pages/home';
+import LoginPage from './pages/login';
+import RegisterPage from './pages/register';
+import { useContext } from 'react';
+import { UserContext } from './context';
 
 function App() {
+  const { user } = useContext(UserContext);
+  console.log(user);
   return (
-    <RootLayout>
-      <div className="min-h-screen overflow-auto flex flex-col items-center justify-center py-8">
-        <div className="w-[90%] lg:w-[60%] xl:w-[60%] flex flex-col gap-6">
-          <TodoAdd />
-          <TodoList />
-        </div>
-      </div>
-    </RootLayout>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Protected isSignedIn={user !== null}>
+              <Home />
+            </Protected>
+          }
+        />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
