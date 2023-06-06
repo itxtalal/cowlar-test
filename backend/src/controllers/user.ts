@@ -184,6 +184,13 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
+    // also delete todos
+    const todos = await prisma.todo.deleteMany({
+      where: {
+        userId,
+      },
+    });
+
     const user = await prisma.user.delete({
       where: { id: userId },
     });
@@ -191,6 +198,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     const { password: _, ...userWithoutPassword } = user;
     res.status(200).json({
       user: userWithoutPassword,
+      todos,
       message: 'User deleted successfully',
       status: 'SUCCESS',
     });
