@@ -20,10 +20,10 @@ function App() {
       if (token) {
         const user = await verifyToken(token);
         updateUser({ ...user, token });
-        setLoading(false);
       }
     };
     func();
+    setLoading(false);
   }, []);
 
   if (loading) return <Loading />;

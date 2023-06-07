@@ -8,6 +8,7 @@ import RootLayout from '../Layout';
 import Button from '../components/Button';
 import { verifyToken } from '../utils/api';
 import { useEffect } from 'react';
+import Loading from '../components/Loading';
 
 type Inputs = {
   name: string;
@@ -17,6 +18,7 @@ type Inputs = {
 
 const Login = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [pageLoading, setPageLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState('');
   const {
     register,
@@ -37,6 +39,7 @@ const Login = () => {
       }
     };
     func();
+    setPageLoading(false);
   }, []);
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
@@ -58,6 +61,8 @@ const Login = () => {
         setError(err.response.data.message);
       });
   };
+
+  if (pageLoading) return <Loading />;
 
   return (
     <RootLayout>

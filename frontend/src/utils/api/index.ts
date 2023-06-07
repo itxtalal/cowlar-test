@@ -13,5 +13,3 @@ export const verifyToken = async (token: string) => {
     return null;
   }
 };
-
-export * from './user';
