@@ -20,11 +20,12 @@ services:
     depends_on:
       - database
     environment:
-      - DB_HOST=database
+      - DB_HOST=localhost
       - DB_PORT=5432
       - DB_NAME=cowlar-test
       - DB_USER=admin
       - DB_PASSWORD=pass
+      - DATABASE_URL=postgresql://admin:pass@database:5432/cowlar-test?schema=public
     networks:
       - cowlar-test
 

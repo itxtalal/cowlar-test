@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const generateHash = async (password: string): Promise<string> => {
   const saltRounds = process.env.SALT_ROUNDS ?? 10;

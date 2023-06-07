@@ -40,13 +40,7 @@ const TodoAdd = () => {
       console.log(res);
 
       if (res.status === 201 || res.data.status === 'SUCCESS') {
-        addTodo({
-          id: Math.floor(Math.random() * 1000),
-          title: todo,
-          completed: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
+        addTodo && addTodo(res.data.todo);
       }
     } catch (error) {
       console.log(error);

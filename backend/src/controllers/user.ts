@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import prisma from '../utils/prisma';
 import { generateHash } from '../utils/password';
 import { signAccessToken } from '../utils/token';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { faker } from '@faker-js/faker';
 
 // Login User
