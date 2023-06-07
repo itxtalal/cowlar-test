@@ -61,7 +61,15 @@ const Login = () => {
       });
   };
 
-  if (pageLoading) return <Loading />;
+  if (pageLoading)
+    return (
+      <RootLayout>
+        <div className="w-screen h-screen flex items-center justify-center">
+          <Loading />
+          <p className="mx-2">Loading ...</p>
+        </div>
+      </RootLayout>
+    );
 
   return (
     <RootLayout>
@@ -85,10 +93,12 @@ const Login = () => {
                 <input
                   type="email"
                   id="email"
-                  {...register('email', { required: true })}
+                  {...register('email', {
+                    required: true,
+                    pattern: /^\S+@\S+$/i,
+                  })}
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-primary-600 focus:ring-primary-600 sm:text-sm"
                   placeholder="name@company.com"
-                  required
                 />
               </div>
               <div>
@@ -104,7 +114,6 @@ const Login = () => {
                   {...register('password', { required: true })}
                   placeholder="••••••••"
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-primary-600 focus:ring-primary-600  sm:text-sm"
-                  required
                 />
               </div>
 

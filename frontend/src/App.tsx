@@ -8,6 +8,7 @@ import { useContext, useEffect, useState } from 'react';
 import { UserContext } from './context';
 import { verifyToken } from './utils/api';
 import Loading from './components/Loading';
+import RootLayout from './Layout';
 
 function App() {
   const { user, updateUser } = useContext(UserContext);
@@ -20,13 +21,23 @@ function App() {
       if (token) {
         const user = await verifyToken(token);
         updateUser({ ...user, token });
+        setLoading(false);
+      } else {
+        setLoading(false);
       }
     };
     func();
-    setLoading(false);
   }, []);
 
-  if (loading) return <Loading />;
+  if (loading)
+    return (
+      <RootLayout>
+        <div className="w-screen h-screen flex items-center justify-center">
+          <Loading />
+          <p className="mx-2">Loading ...</p>
+        </div>
+      </RootLayout>
+    );
 
   return (
     <BrowserRouter>

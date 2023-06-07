@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import Button from './Button';
 import Input from './Input';
 import { UserContext } from '../context';
+import axios from '../config/axios';
 
 const TodoAdd = () => {
   const [todo, setTodo] = useState('');
@@ -14,7 +15,7 @@ const TodoAdd = () => {
     setError('');
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     if (!todo) {
@@ -22,19 +23,38 @@ const TodoAdd = () => {
       setIsLoading(false);
       return;
     }
-    setError('');
-    setTimeout(() => {
-      setIsLoading(false);
-      addTodo({
-        id: Math.floor(Math.random() * 1000),
-        title: todo,
-        completed: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
 
-      setTodo('');
-    }, 2000);
+    const token = localStorage.getItem('COWLAR_TOKEN');
+
+    try {
+      const res = await axios.post(
+        '/todo',
+        { title: todo },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(res);
+
+      if (res.status === 201 || res.data.status === 'SUCCESS') {
+        addTodo({
+          id: Math.floor(Math.random() * 1000),
+          title: todo,
+          completed: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    setError('');
+    setIsLoading(false);
+    setTodo('');
   };
 
   return (

@@ -12,7 +12,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const addTodo = (todo: ITodo) => {
-    setTodos((prev) => [...prev, todo]);
+    setTodos((prev) => [todo, ...prev]);
   };
 
   const deleteTodo = (id: number) => {

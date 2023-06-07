@@ -1,5 +1,22 @@
-import { FC } from 'react';
+import { FC, useContext, useState } from 'react';
 import { ITodo } from '../interfaces';
+import axios from '../config/axios';
+import { UserContext } from '../context';
+
+const CheckIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    className="w-5 h-5"
+  >
+    <path
+      fillRule="evenodd"
+      d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
 
 const DeleteIcon = () => (
   <svg
@@ -18,26 +35,75 @@ const DeleteIcon = () => (
 
 type Props = {
   todo: ITodo;
-  deleteTodo: (id: number) => void;
-  toggleTodo: (id: number) => void;
 };
 
-const Todo: FC<Props> = ({ todo, deleteTodo, toggleTodo }) => {
+const Todo: FC<Props> = ({ todo }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { deleteTodo, toggleTodo } = useContext(UserContext);
+
+  const token = localStorage.getItem('COWLAR_TOKEN');
+
+  const handleDelete = async (id: number) => {
+    setIsLoading(true);
+    try {
+      const res = await axios.delete(`/todo/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 200 || res.data.status === 'SUCCESS') {
+        deleteTodo && deleteTodo(todo.id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleToggle = async (id: number) => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(`/todo/${id}/toggle`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 200 || res.data.status === 'SUCCESS') {
+        toggleTodo && toggleTodo(id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
+
   return (
-    <li className="w-full border-b border-gray-200 rounded-t-lg">
-      <div className="flex items-center pl-3 pr-2">
-        <input
-          type="checkbox"
-          value={todo.completed.toString()}
-          onChange={() => toggleTodo(todo.id)}
-          className="w-6 h-6  text-blue-600 bg-gray-100 hover:bg-blue-600 border-gray-300 rounded-full focus:ring-blue-500 focus:ring-2 transition-all cursor-pointer"
-        />
-        <label className="w-full py-3 ml-3 mr-2 text-base lg:text-lg font-medium text-gray-900">
+    <li
+      className={`w-full border-b border-gray-200 rounded-t-lg ${
+        isLoading ? 'animate-pulse opacity-50' : ''
+      } `}
+    >
+      <div className={`flex items-center pl-3 pr-2 `}>
+        <button
+          disabled={isLoading}
+          onClick={() => handleToggle(todo.id)}
+          className={`flex items-center justify-center text-white rounded-full transition-all h-8 w-8 focus:ring-blue-500 focus:ring-2 ${
+            todo.completed ? 'bg-blue-600' : 'bg-gray-300 hover:bg-blue-600'
+          }`}
+        >
+          {todo.completed ? <CheckIcon /> : null}
+        </button>
+
+        <p className="w-full py-3 ml-3 mr-2 text-base lg:text-lg font-medium text-gray-900">
           {todo.title}
-        </label>
+        </p>
 
         <button
-          onClick={() => deleteTodo(todo.id)}
+          disabled={isLoading}
+          onClick={() => handleDelete(todo.id)}
           className="p-1 text-red-500"
         >
           <DeleteIcon />

@@ -3,13 +3,29 @@ import { ITodo } from '../interfaces';
 import Todo from './Todo';
 import Loading from './Loading';
 import { UserContext } from '../context';
+import axios from '../config/axios';
 
 const TodoList = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const { todos, deleteTodo, toggleTodo } = useContext(UserContext);
+  const { todos, deleteTodo, toggleTodo, hydrateTodos } =
+    useContext(UserContext);
+  const token = localStorage.getItem('COWLAR_TOKEN');
 
   useEffect(() => {
-    setIsLoading(false);
+    const fetchTodos = async () => {
+      const res = await axios.get('/todo', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const todos = res.data.todos;
+
+      hydrateTodos(todos);
+      setIsLoading(false);
+    };
+
+    fetchTodos();
   }, []);
 
   if (isLoading) return <Loading />;
@@ -22,12 +38,7 @@ const TodoList = () => {
       {todos.length > 0 ? (
         <ul className="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
           {todos.map((todo: ITodo) => (
-            <Todo
-              todo={todo}
-              key={todo.id}
-              deleteTodo={deleteTodo}
-              toggleTodo={toggleTodo}
-            />
+            <Todo todo={todo} key={todo.id} />
           ))}
         </ul>
       ) : (

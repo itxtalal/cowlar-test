@@ -62,7 +62,15 @@ const Login = () => {
       });
   };
 
-  if (pageLoading) return <Loading />;
+  if (pageLoading)
+    return (
+      <RootLayout>
+        <div className="w-screen h-screen flex items-center justify-center">
+          <Loading />
+          <p className="mx-2">Loading ...</p>
+        </div>
+      </RootLayout>
+    );
 
   return (
     <RootLayout>
