@@ -118,10 +118,13 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
     const { password: _, ...userWithoutPassword } = user;
 
+    const token = signAccessToken(user);
+
     res.status(201).json({
       user: userWithoutPassword,
       message: 'User created successfully',
       status: 'SUCCESS',
+      token,
     });
   } catch (error) {
     console.log(error);

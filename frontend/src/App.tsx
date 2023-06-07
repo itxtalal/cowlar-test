@@ -4,12 +4,30 @@ import Protected from './Layout/Protected';
 import Home from './pages/home';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { UserContext } from './context';
+import { verifyToken } from './utils/api';
+import Loading from './components/Loading';
 
 function App() {
-  const { user } = useContext(UserContext);
-  console.log(user);
+  const { user, updateUser } = useContext(UserContext);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const func = async () => {
+      const token = localStorage.getItem('COWLAR_TOKEN');
+
+      if (token) {
+        const user = await verifyToken(token);
+        updateUser({ ...user, token });
+        setLoading(false);
+      }
+    };
+    func();
+  }, []);
+
+  if (loading) return <Loading />;
+
   return (
     <BrowserRouter>
       <Routes>

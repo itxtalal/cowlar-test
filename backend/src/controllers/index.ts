@@ -8,7 +8,7 @@ const helloWord = (req: Request, res: Response) => {
 };
 
 const notFound = (req: Request, res: Response) => {
-  res.json({
+  res.status(404).json({
     msg: 'Not Found',
     status: 'FAILURE',
   });
