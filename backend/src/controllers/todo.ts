@@ -109,7 +109,13 @@ const updateTodo = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     if (completed) {
-      updateData.completed = completed === 'true';
+      if (typeof completed === 'boolean') {
+        updateData.completed = completed;
+      }
+
+      if (typeof completed === 'string') {
+        updateData.completed = completed === 'true' ? true : false;
+      }
     }
 
     const updatedTodo = await prisma.todo.update({
