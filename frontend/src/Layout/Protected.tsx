@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 
 function Protected({
@@ -6,7 +6,7 @@ function Protected({
   children,
 }: {
   isSignedIn: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   if (!isSignedIn) {
     return (

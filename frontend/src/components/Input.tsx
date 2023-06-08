@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC, ChangeEvent } from 'react';
 
 type Props = {
   todo: string;
@@ -9,7 +9,7 @@ type Props = {
   placeholder: string;
   id: string;
   type: string;
-  changeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  changeHandler: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 const Input: FC<Props> = ({

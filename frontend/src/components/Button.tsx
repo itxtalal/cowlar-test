@@ -5,6 +5,9 @@ type Props = {
   text: string;
   loadingText: string;
   disabled?: boolean;
+  color?: boolean;
+  type?: 'button' | 'submit' | 'reset';
+  onClick?: () => void;
 };
 
 const LoadingIcon = () => (
@@ -32,17 +35,25 @@ const Button: React.FC<Props> = ({
   disabled,
   text,
   loadingText,
+  color,
+  type = 'submit',
+  onClick,
 }) => {
   return (
     <button
       disabled={isLoading}
-      type="submit"
+      type={type}
+      onClick={onClick}
       className={`text-white my-2 font-medium rounded text-sm md:text-base lg:text-lg px-5 py-2.5 text-center mr-2 inline-flex items-center transition-all ${
         isLoading ? 'cursor-wait' : ''
       } ${
         disabled
           ? 'bg-gray-500 cursor-not-allowed'
-          : ' bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
+          : `${
+              color
+                ? 'bg-orange-700 hover:bg-orange-800 focus:ring-orange-300'
+                : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300'
+            }   focus:ring-4 focus:outline-none`
       }`}
     >
       {isLoading ? <LoadingIcon /> : null}

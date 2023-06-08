@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { ChangeEvent, FormEvent, useContext, useState } from 'react';
 import Button from './Button';
 import Input from './Input';
 import { UserContext } from '../context';
@@ -10,12 +10,12 @@ const TodoAdd = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { addTodo } = useContext(UserContext);
 
-  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setTodo(e.target.value);
     setError('');
   };
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     if (!todo) {

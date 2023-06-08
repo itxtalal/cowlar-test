@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { ITodo, IUser, IUserContext } from '../interfaces';
 
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const UserContext = createContext<IUserContext>(null!);
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {

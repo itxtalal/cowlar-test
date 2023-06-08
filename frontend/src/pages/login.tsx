@@ -1,10 +1,9 @@
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-
-import axios from '../config/axios';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from '../config/axios';
 import RootLayout from '../Layout';
 import Button from '../components/Button';
-import { useState } from 'react';
 import Loading from '../components/Loading';
 import useAuthVerification from '../hooks/useAuthVerification';
 
@@ -32,7 +31,6 @@ const Login = () => {
     axios
       .post('/user/login', data)
       .then((res) => {
-        // console.log('res', res);
         if (res.status === 200 || res.data.success === true) {
           setLoading(false);
           localStorage.setItem('COWLAR_TOKEN', res.data.token);
@@ -41,7 +39,6 @@ const Login = () => {
       })
       .catch((err) => {
         setLoading(false);
-        // console.log('err', err);
         setError(err.response.data.message);
       });
   };

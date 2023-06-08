@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { verifyToken } from '../utils/api';
+import { UserContext } from '../context';
 
 const useAuthVerification = () => {
   const navigate = useNavigate();
   const [pageLoading, setPageLoading] = useState(true);
+  const { updateUser } = useContext(UserContext);
 
   useEffect(() => {
     const verifyUser = async () => {
@@ -12,6 +14,7 @@ const useAuthVerification = () => {
       if (token) {
         const user = await verifyToken(token);
         if (user) {
+          updateUser(user);
           navigate('/');
         }
       }
@@ -19,6 +22,7 @@ const useAuthVerification = () => {
     };
 
     verifyUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const logoutHandler = () => {
