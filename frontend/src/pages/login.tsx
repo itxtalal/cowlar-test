@@ -1,14 +1,12 @@
-import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import axios from '../config/axios';
-
 import { Link, useNavigate } from 'react-router-dom';
 import RootLayout from '../Layout';
 import Button from '../components/Button';
-import { useEffect } from 'react';
-import { verifyToken } from '../utils/api';
+import { useState } from 'react';
 import Loading from '../components/Loading';
+import useAuthVerification from '../hooks/useAuthVerification';
 
 type Inputs = {
   email: string;
@@ -16,9 +14,9 @@ type Inputs = {
 };
 
 const Login = () => {
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [pageLoading, setPageLoading] = React.useState<boolean>(true);
-  const [error, setError] = React.useState('');
+  const { pageLoading } = useAuthVerification();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState('');
   const {
     register,
     handleSubmit,
@@ -26,20 +24,7 @@ const Login = () => {
   } = useForm<Inputs>();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const func = async () => {
-      const token = localStorage.getItem('COWLAR_TOKEN');
-
-      if (token) {
-        const user = await verifyToken(token);
-        if (user) {
-          navigate('/');
-        }
-      }
-    };
-    func();
-    setPageLoading(false);
-  }, []);
+  console.count('Login.tsx');
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     setLoading(true);
@@ -73,7 +58,7 @@ const Login = () => {
 
   return (
     <RootLayout>
-      <div className="custom-bg-gradient flex min-h-screen items-center justify-center">
+      <div className="custom-bg-gradient flex min-h-screen items-center justify-center px-4">
         <div className="w-full rounded-lg bg-white shadow sm:max-w-md md:mt-0 xl:p-0">
           <div className="space-y-4 p-6 sm:p-8 md:space-y-6">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">

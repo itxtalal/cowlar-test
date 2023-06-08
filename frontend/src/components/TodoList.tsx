@@ -7,8 +7,7 @@ import axios from '../config/axios';
 
 const TodoList = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const { todos, deleteTodo, toggleTodo, hydrateTodos } =
-    useContext(UserContext);
+  const { todos, hydrateTodos } = useContext(UserContext);
   const token = localStorage.getItem('COWLAR_TOKEN');
 
   useEffect(() => {

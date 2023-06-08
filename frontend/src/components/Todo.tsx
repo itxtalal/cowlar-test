@@ -90,7 +90,7 @@ const Todo: FC<Props> = ({ todo }) => {
         <button
           disabled={isLoading}
           onClick={() => handleToggle(todo.id)}
-          className={`flex items-center justify-center text-white rounded-full transition-all h-8 w-8 focus:ring-blue-500 focus:ring-2 ${
+          className={`flex items-center justify-center text-white rounded-full transition-all px-2 h-8 w-8 focus:ring-blue-500 focus:ring-2 ${
             todo.completed ? 'bg-blue-600' : 'bg-gray-300 hover:bg-blue-600'
           }`}
         >

@@ -2,18 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Input from '../components/Input';
 import '@testing-library/jest-dom';
 
-// type Props = {
-//     todo: string;
-//     error: string;
-//     isLoading: boolean;
-//     title: string;
-//     errorPlaceholder: string;
-//     placeholder: string;
-//     id: string;
-//     type: string;
-//     changeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
-//   };
-
 describe('Input', () => {
   test('renders Input component', () => {
     render(
