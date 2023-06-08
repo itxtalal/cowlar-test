@@ -9,6 +9,7 @@ const useAuthVerification = () => {
   const { updateUser } = useContext(UserContext);
 
   useEffect(() => {
+    console.log('useAuthVerification.tsx');
     const verifyUser = async () => {
       const token = localStorage.getItem('COWLAR_TOKEN');
       if (token) {
@@ -16,14 +17,18 @@ const useAuthVerification = () => {
         if (user) {
           updateUser(user);
           navigate('/');
+        } else {
+          if (window.location.pathname === '/') navigate('/login');
         }
+      } else {
+        if (window.location.pathname === '/') navigate('/login');
       }
       setPageLoading(false);
     };
 
     verifyUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate]);
+  }, []);
 
   const logoutHandler = () => {
     localStorage.removeItem('COWLAR_TOKEN');

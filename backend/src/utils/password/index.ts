@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs';
+import config from '../../config/app';
 
 const generateHash = async (password: string): Promise<string> => {
-  const saltRounds = process.env.SALT_ROUNDS ?? 10;
+  const saltRounds = config.saltRounds;
 
   const result = await bcrypt.hash(password, +saltRounds);
 

@@ -8,8 +8,13 @@ export const verifyToken = async (token: string) => {
       },
     });
     if (response.status === 200) return response.data.user;
-    else throw new Error('Token verification failed');
+    else {
+      console.log('asdqweASSSSSSSSS');
+
+      throw new Error('Token verification failed');
+    }
   } catch (error) {
+    console.log('asdad');
     return null;
   }
 };
