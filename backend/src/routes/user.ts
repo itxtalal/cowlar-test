@@ -12,11 +12,12 @@ import { checkSchema } from 'express-validator';
 import { createUserSchema, updateUserSchema } from '../schemas/user';
 import { validateSchema } from '../utils/middlewares/validateSchema';
 import verifyJWT from '../utils/middlewares/verifyJWT';
+import rateLimiter from '../utils/middlewares/rateLimiter';
 
 const router = express.Router();
 
 // POST /api/v1/user/login
-router.post('/login', loginUser);
+router.post('/login', rateLimiter, loginUser);
 
 // GET /api/v1/user/me
 router.get('/me', verifyJWT, (req: Request, res: Response) => {
@@ -30,7 +31,7 @@ router.get('/me', verifyJWT, (req: Request, res: Response) => {
 });
 
 // GET /api/v1/user/test
-router.get('/test', createTestUser);
+router.get('/test', rateLimiter, createTestUser);
 
 // POST /api/v1/user
 router.post('/', checkSchema(createUserSchema), validateSchema, createUser);
