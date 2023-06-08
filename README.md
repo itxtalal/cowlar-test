@@ -35,10 +35,12 @@ Run the following command to apply the Migrations
 ```
 
 ### [OPT] Run Prisma Studio
-You can use prisma studio to view the PostgreSQL database and manipulate data directly (not recommended)
+You can use prisma studio to view the PostgreSQL database and manipulate data directly (not recommended).
+- Go to backend directory of the project using your machine's terminal
+- Run the following
 
 ```bash
-  npm run prisma:studio
+  npx prisma studio
 ```
 
 ## Use your App
