@@ -99,6 +99,8 @@ const Todo: FC<Props> = ({ todo }) => {
 
       if (res.status === 200 || res.data.status === 'SUCCESS') {
         editTodo && editTodo(todo.id, newTitle);
+        // lose focus
+        e.currentTarget.blur();
       }
     } catch (error) {
       console.log(error);
@@ -128,6 +130,16 @@ const Todo: FC<Props> = ({ todo }) => {
           className="w-full py-3 px-3 mx-2 text-base lg:text-lg font-medium text-gray-900"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setNewTitle(todo.title);
+              e.currentTarget.blur();
+            }
+          }}
+          onBlur={() => {
+            setNewTitle(todo.title);
+          }}
+          disabled={isLoading}
         />
 
         <button
