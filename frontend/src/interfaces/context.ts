@@ -8,4 +8,5 @@ export interface IUserContext {
   deleteTodo: (id: number) => void;
   toggleTodo: (id: number) => void;
   hydrateTodos: (todos: ITodo[]) => void;
+  editTodo: (id: number, text: string) => void;
 }

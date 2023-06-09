@@ -39,7 +39,8 @@ type Props = {
 
 const Todo: FC<Props> = ({ todo }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { deleteTodo, toggleTodo } = useContext(UserContext);
+  const { deleteTodo, toggleTodo, editTodo } = useContext(UserContext);
+  const [newTitle, setNewTitle] = useState(todo.title);
 
   const token = localStorage.getItem('COWLAR_TOKEN');
 
@@ -80,15 +81,41 @@ const Todo: FC<Props> = ({ todo }) => {
     setIsLoading(false);
   };
 
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    // Prevent default behaviour
+    e.preventDefault();
+    console.log('submit', newTitle);
+    setIsLoading(true);
+    try {
+      const res = await axios.put(
+        `/todo/${todo.id}`,
+        { title: newTitle },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.status === 200 || res.data.status === 'SUCCESS') {
+        editTodo && editTodo(todo.id, newTitle);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
+
   return (
     <li
       className={`w-full border-b border-gray-200 rounded-t-lg ${
         isLoading ? 'animate-pulse opacity-50' : ''
       } `}
     >
-      <div className={`flex items-center pl-3 pr-2 `}>
+      <form onSubmit={submitHandler} className={`flex items-center pl-3 pr-2 `}>
         <button
           disabled={isLoading}
+          type="button"
           onClick={() => handleToggle(todo.id)}
           className={`flex items-center justify-center text-white rounded-full transition-all px-2 h-8 w-8 focus:ring-blue-500 focus:ring-2 ${
             todo.completed ? 'bg-blue-600' : 'bg-gray-300 hover:bg-blue-600'
@@ -97,18 +124,21 @@ const Todo: FC<Props> = ({ todo }) => {
           {todo.completed ? <CheckIcon /> : null}
         </button>
 
-        <p className="w-full py-3 ml-3 mr-2 text-base lg:text-lg font-medium text-gray-900">
-          {todo.title}
-        </p>
+        <input
+          className="w-full py-3 px-3 mx-2 text-base lg:text-lg font-medium text-gray-900"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+        />
 
         <button
+          type="button"
           disabled={isLoading}
           onClick={() => handleDelete(todo.id)}
-          className="p-1 text-red-500"
+          className="p-2 text-red-500"
         >
           <DeleteIcon />
         </button>
-      </div>
+      </form>
     </li>
   );
 };

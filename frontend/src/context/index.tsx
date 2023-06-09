@@ -28,6 +28,12 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     );
   };
 
+  const editTodo = (id: number, title: string) => {
+    setTodos((prev) =>
+      prev.map((todo) => (todo.id === id ? { ...todo, title } : todo))
+    );
+  };
+
   const hydrateTodos = (todos: ITodo[]) => {
     setTodos(() => todos);
   };
@@ -44,6 +50,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     deleteTodo,
     hydrateTodos,
     toggleTodo,
+    editTodo,
   };
 
   // Provide the context value to the children components

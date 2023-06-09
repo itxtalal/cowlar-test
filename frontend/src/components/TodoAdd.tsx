@@ -18,8 +18,15 @@ const TodoAdd = () => {
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+
     if (!todo) {
       setError('Please add a todo');
+      setIsLoading(false);
+      return;
+    }
+
+    if (todo.length < 3) {
+      setError('Todo must be at least 3 characters long');
       setIsLoading(false);
       return;
     }
@@ -63,7 +70,7 @@ const TodoAdd = () => {
         changeHandler={changeHandler}
         title="Add a Todo"
         errorPlaceholder="Please Enter a Todo"
-        placeholder="Learn Docker"
+        placeholder="Do something..."
         id="addTodo"
         type="text"
       />

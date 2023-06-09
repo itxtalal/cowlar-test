@@ -37,7 +37,7 @@ const Input: FC<Props> = ({
         value={todo}
         disabled={isLoading}
         onChange={changeHandler}
-        className={`bg-[#edece7] border text-md xl:text-lg rounded-lg block w-full p-2.5 ${
+        className={`bg-[#edece7] border text-md xl:text-lg rounded-lg block w-full px-4 py-3 ${
           error
             ? ' border-red-500 text-red-700 placeholder-red-700 focus:ring-red-500  focus:border-red-500'
             : ''
