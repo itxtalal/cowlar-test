@@ -23,7 +23,13 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const toggleTodo = (id: number) => {
     setTodos((prev) =>
       prev.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        todo.id === id
+          ? {
+              ...todo,
+              completed: !todo.completed,
+              updatedAt: new Date().toString(),
+            }
+          : todo
       )
     );
   };

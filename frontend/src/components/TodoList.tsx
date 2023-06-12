@@ -73,7 +73,7 @@ const TodoList = () => {
             </option>
             <option value="all">All</option>
             <option value="complete">Completed</option>
-            <option value="incomplete">Incomplete</option>
+            <option value="incomplete">Pending</option>
           </select>
         </div>
       </div>

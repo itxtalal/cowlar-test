@@ -1,7 +1,8 @@
-import { FC, useContext, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import { ITodo } from '../interfaces';
 import axios from '../config/axios';
 import { UserContext } from '../context';
+import toast from 'react-hot-toast';
 
 const CheckIcon = () => (
   <svg
@@ -41,19 +42,29 @@ const Todo: FC<Props> = ({ todo }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { deleteTodo, toggleTodo, editTodo } = useContext(UserContext);
   const [newTitle, setNewTitle] = useState(todo.title);
+  const todoCreated = new Date(todo.createdAt!);
+  const todoUpdated = new Date(todo.updatedAt!);
 
   const token = localStorage.getItem('COWLAR_TOKEN');
 
   const handleDelete = async (id: number) => {
     setIsLoading(true);
-    try {
-      const res = await axios.delete(`/todo/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
 
-      if (res.status === 200 || res.data.status === 'SUCCESS') {
+    try {
+      const result = await toast.promise(
+        axios.delete(`/todo/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        {
+          loading: 'Deleting todo...',
+          success: 'Todo deleted',
+          error: 'Failed to delete todo',
+        }
+      );
+
+      if (result.status === 200 || result.data.status === 'SUCCESS') {
         deleteTodo && deleteTodo(todo.id);
       }
     } catch (error) {
@@ -66,11 +77,18 @@ const Todo: FC<Props> = ({ todo }) => {
   const handleToggle = async (id: number) => {
     setIsLoading(true);
     try {
-      const res = await axios.get(`/todo/${id}/toggle`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await toast.promise(
+        axios.get(`/todo/${id}/toggle`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        {
+          loading: 'Toggling Todo',
+          success: 'Todo Toggled',
+          error: 'Toggling Failed',
+        }
+      );
 
       if (res.status === 200 || res.data.status === 'SUCCESS') {
         toggleTodo && toggleTodo(id);
@@ -87,20 +105,27 @@ const Todo: FC<Props> = ({ todo }) => {
     console.log('submit', newTitle);
     setIsLoading(true);
     try {
-      const res = await axios.put(
-        `/todo/${todo.id}`,
-        { title: newTitle },
+      const res = await toast.promise(
+        axios.put(
+          `/todo/${todo.id}`,
+          { title: newTitle },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        ),
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          loading: 'Updating Todo',
+          success: 'Todo Edited',
+          error: 'Failed to Update',
         }
       );
 
       if (res.status === 200 || res.data.status === 'SUCCESS') {
         editTodo && editTodo(todo.id, newTitle);
         // lose focus
-        e.currentTarget.blur();
+        e?.currentTarget?.blur();
       }
     } catch (error) {
       console.log(error);
@@ -125,23 +150,46 @@ const Todo: FC<Props> = ({ todo }) => {
         >
           {todo.completed ? <CheckIcon /> : null}
         </button>
-
-        <input
-          className="w-full py-3 px-3 mx-2 text-base lg:text-lg font-medium text-gray-900"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              setNewTitle(todo.title);
-              e.currentTarget.blur();
-            }
-          }}
-          onBlur={() => {
-            setNewTitle(todo.title);
-          }}
-          disabled={isLoading}
-        />
-
+        <div className={`flex flex-col w-full py-3 px-3 mx-2 `}>
+          <div className="flex w-full">
+            <input
+              className="text-base lg:text-lg font-medium text-gray-900 w-full mr-4"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setNewTitle(todo.title);
+                  e.currentTarget.blur();
+                }
+              }}
+              onBlur={() => {
+                setNewTitle(todo.title);
+              }}
+              disabled={isLoading}
+            />
+            <span
+              className={`text-xs rounded-xl px-2 py-1 h-fit ${
+                todo.completed ? 'bg-green-300' : 'bg-pink-300'
+              } `}
+            >
+              {todo.completed ? 'Completed' : 'Pending'}
+            </span>
+          </div>
+          {todo.completed ? (
+            <p className="text-gray-500 text-xs">
+              Todo Completed:{' '}
+              {todoUpdated.toLocaleTimeString() +
+                ' • ' +
+                todoUpdated.toLocaleDateString()}
+            </p>
+          ) : null}
+          <p className="text-gray-500 text-xs">
+            Todo Created:{' '}
+            {todoCreated.toLocaleTimeString() +
+              ' • ' +
+              todoCreated.toLocaleDateString()}
+          </p>
+        </div>
         <button
           type="button"
           disabled={isLoading}

@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useContext, useState } from 'react';
 import Button from './Button';
 import Input from './Input';
+import toast from 'react-hot-toast';
 import { UserContext } from '../context';
 import axios from '../config/axios';
 
@@ -34,13 +35,20 @@ const TodoAdd = () => {
     const token = localStorage.getItem('COWLAR_TOKEN');
 
     try {
-      const res = await axios.post(
-        '/todo',
-        { title: todo },
+      const res = await toast.promise(
+        axios.post(
+          '/todo',
+          { title: todo },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        ),
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          loading: 'Adding Todo',
+          success: 'Todo Added',
+          error: 'Failed to Add',
         }
       );
 
