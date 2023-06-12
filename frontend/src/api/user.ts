@@ -1,6 +1,5 @@
 import toast from 'react-hot-toast';
 import axios from '../config/axios';
-import { AxiosError } from 'axios';
 
 export const getTestUser = async () => {
   try {
@@ -14,9 +13,9 @@ export const getTestUser = async () => {
         token: res.data.token,
       };
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    toast.error('Operation Failed');
+    toast.error(error?.response?.data?.message || 'Test User Creation Failed');
   }
 
   return null;
@@ -38,9 +37,9 @@ export const createUser = async (data: {
         token: res.data.token,
       };
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    toast.error('Operation Failed');
+    toast.error(error?.response?.data?.message || 'Signup failed');
   }
   return null;
 };
