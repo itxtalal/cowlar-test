@@ -1,20 +1,12 @@
-import axios from '../../config/axios';
+import { verifyUser } from '../../api/user';
 
 export const verifyToken = async (token: string) => {
-  try {
-    const response = await axios.get('/user/me', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (response.status === 200) return response.data.user;
-    else {
-      console.log('asdqweASSSSSSSSS');
-
-      throw new Error('Token verification failed');
-    }
-  } catch (error) {
-    console.log('asdad');
+  const user = await verifyUser(token);
+  if (user) {
+    console.log('Token verification succeeded:', user);
+    return user;
+  } else {
+    console.log('Token verification failed');
     return null;
   }
 };

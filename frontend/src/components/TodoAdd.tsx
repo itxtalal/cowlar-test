@@ -1,15 +1,16 @@
 import { ChangeEvent, FormEvent, useContext, useState } from 'react';
 import Button from './Button';
 import Input from './Input';
-import toast from 'react-hot-toast';
 import { UserContext } from '../context';
-import axios from '../config/axios';
+import { addTodo as addTodoAPI } from '../api/todo';
 
 const TodoAdd = () => {
   const [todo, setTodo] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { addTodo } = useContext(UserContext);
+
+  const token = localStorage.getItem('COWLAR_TOKEN') || '';
 
   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setTodo(e.target.value);
@@ -32,30 +33,11 @@ const TodoAdd = () => {
       return;
     }
 
-    const token = localStorage.getItem('COWLAR_TOKEN');
-
     try {
-      const res = await toast.promise(
-        axios.post(
-          '/todo',
-          { title: todo },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        ),
-        {
-          loading: 'Adding Todo',
-          success: 'Todo Added',
-          error: 'Failed to Add',
-        }
-      );
+      const newTodo = await addTodoAPI(todo, token);
 
-      console.log(res);
-
-      if (res.status === 201 || res.data.status === 'SUCCESS') {
-        addTodo && addTodo(res.data.todo);
+      if (newTodo) {
+        addTodo && addTodo(newTodo);
       }
     } catch (error) {
       console.log(error);

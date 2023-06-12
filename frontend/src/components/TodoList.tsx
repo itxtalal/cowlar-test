@@ -3,7 +3,7 @@ import { ITodo } from '../interfaces';
 import Todo from './Todo';
 import Loading from './Loading';
 import { UserContext } from '../context';
-import axios from '../config/axios';
+import { getTodos } from '../api/todo';
 
 const TodoList = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -12,23 +12,16 @@ const TodoList = () => {
     'all'
   );
   const [filteredTodos, setFilteredTodos] = useState<ITodo[]>([]);
-  const token = localStorage.getItem('COWLAR_TOKEN');
+  const token = localStorage.getItem('COWLAR_TOKEN') || '';
 
   useEffect(() => {
-    const fetchTodos = async () => {
-      const res = await axios.get('/todo', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const todos = res.data.todos;
-
+    const fetchData = async () => {
+      const todos = await getTodos(token);
       hydrateTodos(todos);
       setIsLoading(false);
     };
 
-    fetchTodos();
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

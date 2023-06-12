@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from '../config/axios';
 import RootLayout from '../Layout';
 import Button from '../components/Button';
 import Loading from '../components/Loading';
+import { createUser, getTestUser as getTestUserAPI } from '../api/user';
 import useAuthVerification from '../hooks/useAuthVerification';
 
 type Inputs = {
@@ -32,39 +32,41 @@ const Register = () => {
   const navigate = useNavigate();
 
   const getTestUser = async () => {
-    setLoading(true);
     try {
-      const res = await axios.get('/user/test');
-      if (res.status === 201 || res.data.status === 'SUCCESS') {
+      setLoading(true);
+      const userData = await getTestUserAPI();
+      if (userData) {
         setLoading(false);
-        localStorage.setItem('COWLAR_TOKEN', res.data.token);
+        localStorage.setItem('COWLAR_TOKEN', userData.token);
         setShowTestUser(true);
         setTestUser({
-          name: res.data.user.name,
-          email: res.data.user.email,
-          password: res.data.user.password,
+          name: userData.name,
+          email: userData.email,
+          password: userData.password,
         });
       }
     } catch (error: any) {
       setLoading(false);
-      setError(error.response.data.message);
+      setError(error?.response?.data?.message || "Couldn't get test user");
     }
+    setLoading(false);
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setLoading(true);
 
     try {
-      const res = await axios.post('/user', data);
-      if (res.status === 201 || res.data.status === 'SUCCESS') {
+      const user = await createUser(data);
+      if (user) {
         setLoading(false);
-        localStorage.setItem('COWLAR_TOKEN', res.data.token);
+        localStorage.setItem('COWLAR_TOKEN', user.token);
         navigate('/');
       }
     } catch (error: any) {
       setLoading(false);
       setError(error.response.data.message);
     }
+    setLoading(false);
   };
 
   if (pageLoading)

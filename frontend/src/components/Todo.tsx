@@ -1,8 +1,11 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import { ITodo } from '../interfaces';
-import axios from '../config/axios';
 import { UserContext } from '../context';
-import toast from 'react-hot-toast';
+import {
+  deleteTodo as deleteTodoAPI,
+  toggleTodo as toggleTodoAPI,
+  editTodo as editTodoAPI,
+} from '../api/todo';
 
 const CheckIcon = () => (
   <svg
@@ -45,26 +48,15 @@ const Todo: FC<Props> = ({ todo }) => {
   const todoCreated = new Date(todo.createdAt!);
   const todoUpdated = new Date(todo.updatedAt!);
 
-  const token = localStorage.getItem('COWLAR_TOKEN');
+  const token = localStorage.getItem('COWLAR_TOKEN') || '';
 
   const handleDelete = async (id: number) => {
     setIsLoading(true);
 
     try {
-      const result = await toast.promise(
-        axios.delete(`/todo/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-        {
-          loading: 'Deleting todo...',
-          success: 'Todo deleted',
-          error: 'Failed to delete todo',
-        }
-      );
+      const result = await deleteTodoAPI(id, token);
 
-      if (result.status === 200 || result.data.status === 'SUCCESS') {
+      if (result) {
         deleteTodo && deleteTodo(todo.id);
       }
     } catch (error) {
@@ -76,60 +68,35 @@ const Todo: FC<Props> = ({ todo }) => {
 
   const handleToggle = async (id: number) => {
     setIsLoading(true);
-    try {
-      const res = await toast.promise(
-        axios.get(`/todo/${id}/toggle`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-        {
-          loading: 'Toggling Todo',
-          success: 'Todo Toggled',
-          error: 'Toggling Failed',
-        }
-      );
 
-      if (res.status === 200 || res.data.status === 'SUCCESS') {
+    try {
+      const res = await toggleTodoAPI(id, token);
+
+      if (res) {
         toggleTodo && toggleTodo(id);
       }
     } catch (error) {
       console.log(error);
     }
+
     setIsLoading(false);
   };
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-    // Prevent default behaviour
     e.preventDefault();
-    console.log('submit', newTitle);
     setIsLoading(true);
-    try {
-      const res = await toast.promise(
-        axios.put(
-          `/todo/${todo.id}`,
-          { title: newTitle },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        ),
-        {
-          loading: 'Updating Todo',
-          success: 'Todo Edited',
-          error: 'Failed to Update',
-        }
-      );
 
-      if (res.status === 200 || res.data.status === 'SUCCESS') {
+    try {
+      const res = await editTodoAPI(todo.id, newTitle, token);
+
+      if (res) {
         editTodo && editTodo(todo.id, newTitle);
-        // lose focus
         e?.currentTarget?.blur();
       }
     } catch (error) {
       console.log(error);
     }
+
     setIsLoading(false);
   };
 

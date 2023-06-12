@@ -6,6 +6,7 @@ import RootLayout from '../Layout';
 import Button from '../components/Button';
 import Loading from '../components/Loading';
 import useAuthVerification from '../hooks/useAuthVerification';
+import { loginUser } from '../api/user';
 
 type Inputs = {
   email: string;
@@ -25,22 +26,20 @@ const Login = () => {
 
   console.count('Login.tsx');
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setLoading(true);
 
-    axios
-      .post('/user/login', data)
-      .then((res) => {
-        if (res.status === 200 || res.data.success === true) {
-          setLoading(false);
-          localStorage.setItem('COWLAR_TOKEN', res.data.token);
-          navigate('/');
-        }
-      })
-      .catch((err) => {
-        setLoading(false);
-        setError(err.response.data.message);
-      });
+    try {
+      const user = await loginUser(data.email, data.password);
+      if (user) {
+        localStorage.setItem('COWLAR_TOKEN', user.token);
+        navigate('/');
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log('error', error);
+    }
+    setLoading(false);
   };
 
   if (pageLoading)
