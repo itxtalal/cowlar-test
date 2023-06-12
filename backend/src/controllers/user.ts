@@ -1,28 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
-import prisma from '../utils/prisma';
-import { generateHash } from '../utils/password';
 import { signAccessToken } from '../utils/token';
-import bcrypt from 'bcryptjs';
-import { faker } from '@faker-js/faker';
+import * as userService from '../services/user';
 
 // Login User
 const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+    const user = await userService.loginUser(email, password);
     if (!user) {
       return res.status(404).json({
         message: 'User not found',
-        status: 'FAILED',
-      });
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password ?? '');
-
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        message: 'Invalid credentials',
         status: 'FAILED',
       });
     }
@@ -46,13 +33,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 // Get all users
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-      },
-    });
+    const users = await userService.getUsers();
 
     res.status(200).json({
       users,
@@ -68,10 +49,8 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   try {
-    const userId = parseInt(id);
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
+    const user = await userService.getUserById(parseInt(id));
+
     if (!user) {
       return res.status(404).json({
         message: 'User not found',
@@ -95,30 +74,18 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password, name } = req.body;
   try {
-    const userExists = await prisma.user.findUnique({
-      where: { email },
-    });
+    const createdUser = await userService.createUser(email, password, name);
 
-    if (userExists) {
+    if (!createdUser) {
       return res.status(409).json({
         message: 'User already exists',
         status: 'FAILED',
       });
     }
 
-    const hashedPassword = await generateHash(password);
+    const { password: _, ...userWithoutPassword } = createdUser;
 
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        name,
-      },
-    });
-
-    const { password: _, ...userWithoutPassword } = user;
-
-    const token = signAccessToken(user);
+    const token = signAccessToken(createdUser);
 
     res.status(201).json({
       user: userWithoutPassword,
@@ -128,7 +95,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     });
   } catch (error) {
     console.log(error);
-    next('Error creating users');
+    next('Error creating user');
   }
 };
 
@@ -139,30 +106,21 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = parseInt(id);
 
-    if (req.user?.id !== userId) {
-      return res.status(403).json({
-        message: 'You are not authorized to perform this action',
+    const updatedUser = await userService.updateUser(
+      userId,
+      password,
+      name,
+      req.user!
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: 'User not found or you are not authorized to update this user',
         status: 'FAILED',
       });
     }
 
-    const updateData: { password?: string; name?: string } = {};
-
-    if (password) {
-      const hashedPassword = await generateHash(password);
-      updateData.password = hashedPassword;
-    }
-
-    if (name) {
-      updateData.name = name;
-    }
-
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: updateData,
-    });
-
-    const { password: _, ...userWithoutPassword } = user;
+    const { password: _, ...userWithoutPassword } = updatedUser;
 
     res.status(200).json({
       user: userWithoutPassword,
@@ -170,7 +128,8 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       status: 'SUCCESS',
     });
   } catch (error) {
-    next('Error updating users');
+    console.log(error);
+    next('Error updating user');
   }
 };
 
@@ -180,33 +139,24 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = parseInt(id);
 
-    if (req.user?.id !== userId) {
-      return res.status(403).json({
-        message: 'You are not authorized to perform this action',
+    // req,user is always going to be here if passed through the auth middleware
+    const deletedUser = await userService.deleteUser(userId, req.user!);
+
+    if (!deletedUser) {
+      return res.status(404).json({
+        message: 'User not found or you are not authorized to delete this user',
         status: 'FAILED',
       });
     }
 
-    // also delete todos
-    const todos = await prisma.todo.deleteMany({
-      where: {
-        userId,
-      },
-    });
-
-    const user = await prisma.user.delete({
-      where: { id: userId },
-    });
-
-    const { password: _, ...userWithoutPassword } = user;
     res.status(200).json({
-      user: userWithoutPassword,
-      todos,
+      user: deletedUser,
       message: 'User deleted successfully',
       status: 'SUCCESS',
     });
   } catch (error) {
-    next('Error deleting users');
+    console.log(error);
+    next('Error deleting user');
   }
 };
 
@@ -217,28 +167,17 @@ const createTestUser = async (
   next: NextFunction
 ) => {
   try {
-    const password = faker.internet.password();
-    const hashedPassword = await generateHash(password);
-
-    const user = await prisma.user.create({
-      data: {
-        email: faker.internet.email(),
-        password: hashedPassword,
-        name: faker.person.fullName(),
-      },
-    });
-
-    const token = signAccessToken(user);
+    const createdUser = await userService.createTestUser();
 
     res.status(201).json({
-      user: { ...user, password },
+      user: createdUser,
       message: 'User created successfully',
       status: 'SUCCESS',
-      token,
+      token: createdUser.token,
     });
   } catch (error) {
     console.log(error);
-    next('Error creating users');
+    next('Error creating user');
   }
 };
 

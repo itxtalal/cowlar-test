@@ -1,17 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import prisma from '../utils/prisma';
+import * as todoService from '../services/todo';
 
 // Get all todos
 const getAllTodos = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const todos = await prisma.todo.findMany({
-      where: {
-        userId: req.user?.id,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    const userId = req.user?.id;
+    const todos = await todoService.getAllTodos(userId);
 
     res.status(200).json({
       todos,
@@ -28,14 +23,9 @@ const getAllTodos = async (req: Request, res: Response, next: NextFunction) => {
 const createTodo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title } = req.body;
+    const userId = req.user!.id;
 
-    const newTodo = await prisma.todo.create({
-      data: {
-        title,
-        completed: false,
-        userId: req.user!.id,
-      },
-    });
+    const newTodo = await todoService.createTodo(title, userId);
 
     res.status(201).json({
       status: 'SUCCESS',
@@ -53,11 +43,7 @@ const getTodo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
-    const todo = await prisma.todo.findUnique({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    const todo = await todoService.getTodo(parseInt(id));
 
     if (!todo) {
       return res.status(404).json({
@@ -82,48 +68,12 @@ const updateTodo = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { title, completed } = req.body;
 
-    const todo = await prisma.todo.findUnique({
-      where: {
-        id: parseInt(id),
-      },
-    });
-
-    if (todo?.userId !== req.user?.id) {
-      return res.status(403).json({
-        message: 'You are not authorized to update this todo',
-        status: 'FAILED',
-      });
-    }
-
-    if (!todo) {
-      return res.status(404).json({
-        message: 'Todo not found',
-        status: 'FAILED',
-      });
-    }
-
-    const updateData: { title?: string; completed?: boolean } = {};
-
-    if (title) {
-      updateData.title = title;
-    }
-
-    if (completed) {
-      if (typeof completed === 'boolean') {
-        updateData.completed = completed;
-      }
-
-      if (typeof completed === 'string') {
-        updateData.completed = completed === 'true' ? true : false;
-      }
-    }
-
-    const updatedTodo = await prisma.todo.update({
-      where: {
-        id: parseInt(id),
-      },
-      data: updateData,
-    });
+    const updatedTodo = await todoService.updateTodo(
+      parseInt(id),
+      title,
+      completed,
+      req.user?.id
+    );
 
     res.status(200).json({
       status: 'SUCCESS',
@@ -141,31 +91,7 @@ const deleteTodo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
-    const todo = await prisma.todo.findUnique({
-      where: {
-        id: parseInt(id),
-      },
-    });
-
-    if (todo?.userId !== req.user?.id) {
-      return res.status(403).json({
-        message: 'You are not authorized to delete this todo',
-        status: 'FAILED',
-      });
-    }
-
-    if (!todo) {
-      return res.status(404).json({
-        message: 'Todo not found',
-        status: 'FAILED',
-      });
-    }
-
-    await prisma.todo.delete({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    await todoService.deleteTodo(parseInt(id), req.user?.id);
 
     res.status(200).json({
       status: 'SUCCESS',
@@ -182,34 +108,10 @@ const toggleTodo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
-    const todo = await prisma.todo.findUnique({
-      where: {
-        id: parseInt(id),
-      },
-    });
-
-    if (todo?.userId !== req.user?.id) {
-      return res.status(403).json({
-        message: 'You are not authorized to complete this todo',
-        status: 'FAILED',
-      });
-    }
-
-    if (!todo) {
-      return res.status(404).json({
-        message: 'Todo not found',
-        status: 'FAILED',
-      });
-    }
-
-    const updatedTodo = await prisma.todo.update({
-      where: {
-        id: parseInt(id),
-      },
-      data: {
-        completed: !todo.completed,
-      },
-    });
+    const updatedTodo = await todoService.toggleTodo(
+      parseInt(id),
+      req.user?.id
+    );
 
     res.status(200).json({
       status: 'SUCCESS',
@@ -229,11 +131,7 @@ const deleteAllTodos = async (
   next: NextFunction
 ) => {
   try {
-    await prisma.todo.deleteMany({
-      where: {
-        userId: req.user?.id,
-      },
-    });
+    await todoService.deleteAllTodos(req.user?.id);
 
     res.status(200).json({
       status: 'SUCCESS',

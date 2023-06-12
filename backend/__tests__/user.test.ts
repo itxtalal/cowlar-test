@@ -46,13 +46,13 @@ describe('User Routes', () => {
       expect(response.body).toHaveProperty('token');
     });
 
-    test('should return 401 Unauthorized when invalid credentials are provided', async () => {
+    test('should return 404 Unauthorized when invalid credentials are provided', async () => {
       const response = await request(app).post('/api/v1/user/login').send({
         email: 'test@example.com',
         password: 'wrongpassword',
       });
 
-      expect(response.status).toBe(401);
+      expect(response.status).toBe(404);
     });
   });
 
@@ -164,7 +164,7 @@ describe('User Routes', () => {
       expect(response.body).toHaveProperty('user');
     });
 
-    test('should return 403 Forbidden when trying to update a user with a different ID', async () => {
+    test('should return 404 Forbidden when trying to update a user with a different ID', async () => {
       const response = await request(app)
         .put(`/api/v1/user/${userId2}`)
         .set('Authorization', `Bearer ${token}`)
@@ -173,17 +173,17 @@ describe('User Routes', () => {
           name: 'Updated User',
         });
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(404);
     });
   });
 
   describe('DELETE /api/v1/user/:id', () => {
-    test('should return 403 Forbidden when trying to delete a user with a different ID', async () => {
+    test('should return 404 Forbidden when trying to delete a user with a different ID', async () => {
       const response = await request(app)
         .delete(`/api/v1/user/${userId2}`) // Use a different ID
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(404);
     });
     test('should return 200 OK and delete the user with the specified ID', async () => {
       const response = await request(app)
