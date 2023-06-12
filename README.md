@@ -8,33 +8,37 @@ A dockerized Full-Stack Todo App where users can signup or use a test account to
 
 ## Setting up the Project Locally
 
-Clone the project
+1. Clone the project
 
 ```bash
   git clone https://github.com/itxtalal/ikonic-test
 ```
 
-Go to the project directory
+2. Go to the project directory
 
 ```bash
   cd ikonic-test
 ```
 
-Build and Run the Docker Container
+
+3. Rename `sample.env` to `.env` in both `frontend` and `backend` folders.
+
+
+4. Build and Run the Docker Container
 
 ```bash
   docker compose up --build
 ```
 
-### [IMP] Apply Prisma Migrations
+5. ### [IMP] Apply Prisma Migrations
 Open Docker Desktop App, Check the `cowlar-test` network, open the `backend` container. Click on Terminal to access the bash.
 
-Run the following command to apply the Migrations
+6. Run the following command to apply the Migrations
 ```bash
   npx prisma migrate dev
 ```
 
-### [OPT] Run Prisma Studio
+7. ### [OPT] Run Prisma Studio
 You can use prisma studio to view the PostgreSQL database and manipulate data directly (not recommended).
 - Go to backend directory of the project using your machine's terminal
 - Run the following
