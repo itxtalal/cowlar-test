@@ -25,7 +25,6 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
       token,
     });
   } catch (error) {
-    console.log(error);
     next('Error logging in user');
   }
 };

@@ -26,8 +26,9 @@ const loginUser = async (
     }
 
     return user;
-  } catch (error) {
-    throw new Error('Error logging in user');
+  } catch (error: any) {
+    console.log('Login Service Error', error);
+    throw new Error('Login Service Error');
   }
 };
 
@@ -44,8 +45,9 @@ const getUsers = async (): Promise<
     });
 
     return users;
-  } catch (error) {
-    throw new Error('Error retrieving users');
+  } catch (error: any) {
+    console.log('Get Users Service Error', error);
+    throw new Error('Get Users Service users');
   }
 };
 
@@ -56,8 +58,9 @@ const getUserById = async (userId: number) => {
     });
 
     return user;
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    console.log('Get User Error', error);
+    throw new Error('Get Users Error');
   }
 };
 
@@ -83,7 +86,8 @@ const createUser = async (email: string, password: string, name: string) => {
 
     return createdUser;
   } catch (error) {
-    throw error;
+    console.log('Create User SErvice Error', error);
+    throw new Error('Create User Service');
   }
 };
 
@@ -116,7 +120,8 @@ const updateUser = async (
 
     return updatedUser;
   } catch (error) {
-    throw error;
+    console.log('Update User Service Error', error);
+    throw new Error('Update User Service Error');
   }
 };
 
@@ -140,7 +145,8 @@ const deleteUser = async (userId: number, currentUser: { id?: number }) => {
 
     return deletedUser;
   } catch (error) {
-    throw error;
+    console.log('Delete User Service Error', error);
+    throw new Error('Delete User Service Error');
   }
 };
 
@@ -161,7 +167,8 @@ const createTestUser = async () => {
 
     return { ...user, password, token };
   } catch (error) {
-    throw error;
+    console.log('Create Test User Service Error', error);
+    throw new Error('Create Test User Service Error');
   }
 };
 

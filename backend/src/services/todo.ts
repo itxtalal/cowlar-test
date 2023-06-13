@@ -13,7 +13,8 @@ const getAllTodos = async (userId: number | undefined) => {
 
     return todos;
   } catch (error) {
-    throw error;
+    console.log('Get All Todo Service Error', error);
+    throw new Error('Get All Todo Service Error');
   }
 };
 
@@ -29,7 +30,8 @@ const createTodo = async (title: string, userId: number) => {
 
     return newTodo;
   } catch (error) {
-    throw error;
+    console.log('Create Todo Service Error', error);
+    throw new Error('Create Todo Service Error');
   }
 };
 
@@ -43,7 +45,8 @@ const getTodo = async (id: number) => {
 
     return todo;
   } catch (error) {
-    throw error;
+    console.log('Get Todo Service Error', error);
+    throw new Error('Get Todo Service Error');
   }
 };
 
@@ -93,7 +96,8 @@ const updateTodo = async (
 
     return updatedTodo;
   } catch (error) {
-    throw error;
+    console.log('Update Todo Service Error', error);
+    throw new Error('Update Todo Service Error');
   }
 };
 
@@ -119,7 +123,8 @@ const deleteTodo = async (id: number, userId: number | undefined) => {
       },
     });
   } catch (error) {
-    throw error;
+    console.log('Delete Todo Service Error', error);
+    throw new Error('Delete Todo Service Error');
   }
 };
 
@@ -150,7 +155,8 @@ const toggleTodo = async (id: number, userId: number | undefined) => {
 
     return updatedTodo;
   } catch (error) {
-    throw error;
+    console.log('Toggle Todo Service Error', error);
+    throw new Error('Toggle Todo Service Error');
   }
 };
 
@@ -162,7 +168,8 @@ const deleteAllTodos = async (userId: number | undefined) => {
       },
     });
   } catch (error) {
-    throw error;
+    console.log('Delete All Todo Service Error', error);
+    throw new Error('Delete All Todo Service Error');
   }
 };
 
