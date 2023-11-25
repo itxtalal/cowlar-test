@@ -11,13 +11,13 @@ A dockerized Full-Stack Todo App where users can signup or use a test account to
 1. Clone the project
 
 ```bash
-  git clone https://github.com/itxtalal/ikonic-test
+  git clone https://github.com/itxtalal/cowlar-test
 ```
 
 2. Go to the project directory
 
 ```bash
-  cd ikonic-test
+  cd cowlar-test
 ```
 
 
